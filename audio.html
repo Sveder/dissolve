@@ -31,21 +31,21 @@
     <div style="display:none"><div style="background-color:black; color:#dddddd; padding:20px;" id="error-div">
     </div></div>
     
+    <a style="display:none" id="select-more" href="#error-underflow"></a>
+    <div style="display:none"><div style="background-color:black; color:#dddddd; padding:20px;" id="error-underflow">You have to select at least one tour. Click on the markers to select tours.
+    </div></div>
+    
+    
     
     <!--  Here be the map  -->
     <div>
-    <div id="map-div" style="position:absolute; margin:0px; width:100%; height:100%;"></div>
-    <canvas id="map-canvas" style="position:absolute; margin:0px; width:100%; height:10%;"></canvas>
+    <div id="map-div" style="margin:0px; width:100%; height:100%;"></div>
     </div>
     
     
     <form name="freshpaint" onsubmit="update_markers();" action="app.html" method="GET">
       
 
-      <audio id="first-audio" style="margin-right:10px; display:none;" controls="controls">
-	<source src="audio/industry.mp3" type="audio/mp3"/>
-	Your browser does not support the audio tag.
-      </audio>
 <!--      -->
 <!--      <input type="checkbox" name="audio_jaffa">-->
 <!--      <audio controls="controls">-->
@@ -68,6 +68,8 @@
 <!--      </br>-->
     
       <input id="markers" type="hidden" value="" name="markers">
-    </form>    
+      <input style="display:none;" id="submit-button" type="submit"/>
+    </form>
+    <button onclick="check();">Xsad</button>
   </body>
 </html>

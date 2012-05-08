@@ -64,27 +64,26 @@ var marker_list = new Array();
 var visuals_count = 0;
 var is_audio_shown = false;
 var map;
-var canvas;
-var ctx;
 
-//Import web font:
-WebFontConfig = {
-  google: { families: [ 'Gorditas::latin' ] }
-};
-(function() {
-  var wf = document.createElement('script');
-  wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
-    '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
-  wf.type = 'text/javascript';
-  wf.async = 'true';
-  var s = document.getElementsByTagName('script')[0];
-  s.parentNode.insertBefore(wf, s);
-})(); 
-
+function check(){
+    if (visuals_count > 0){
+        document.getElementById("submit-button").click();
+    }
+    else {
+        $("a#select-more").fancybox({
+		'hideOnContentClick': true,
+                'transitionIn'	:	'fade',
+		'transitionOut'	:	'fade',
+		'speedIn'	:	600, 
+		'speedOut'	:	200,
+                'padding'       :       0,
+	});
+      $("a#select-more").click(); 
+        
+    }
+}
 
 function initialize() {
-  canvas = document.getElementById("map-canvas");
-  ctx = canvas.getContext("2d");
   
   //Create map:
   var center = new google.maps.LatLng(31.778602,35.213671);
