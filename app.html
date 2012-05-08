@@ -1,0 +1,244 @@
+<html>
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"></script>
+    <style>
+      video, canvas {
+        margin-top: 25px;
+        width: 100%;
+        height: 100%;
+        border: 1px solid black;
+      }
+      
+      .mirror {
+        -moz-transform: scale(-1, 1);
+        -webkit-transform: scale(-1, 1);
+        -o-transform: scale(-1, 1);
+        transform: scale(-1, 1);
+        filter: FlipH;
+      }
+      
+    </style>
+  </head>
+  
+  <body>
+    
+    <video style="display:none;" id="video-canvas-fancy" controls muted autoplay>
+      <source src="video/vid3.m4v" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
+    </video>
+    
+    <video style="display:none;" id="video-second" controls muted autoplay>
+      <source src="video/vid4.m4v" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
+    </video>
+    
+    <canvas style= "display:none;" id="canvas-copy-fancy"></canvas>
+    <canvas id="canvas-final"></canvas>
+    
+    </br>Change Opacity:</br>
+    <input type="range" value="100" min="0" max="1" step="0.01" onchange="change_opacity(this.value)"/>
+    <button type="button" onclick="toggle_bw();">Black and white</button>
+    <button type="button" onclick="toggle_invert();">Invert</button>
+    <button type="button" onclick="toggle_mirror();">Mirror</button>
+    <button type="button" onclick="shake();">Shake</button>
+    <button type="button" onclick="tester();">Frame?</button>
+    </br>
+    <input type="range" value="1" min="0" max="1" step="0.1" onchange="toggle_red(this.value);"/>
+    <input type="range" value="1" min="0" max="1" step="0.1" onchange="toggle_green(this.value);"/>
+    <input type="range" value="1" min="0" max="1" step="0.1" onchange="toggle_blue(this.value);"/>
+
+
+    <script>
+      var video_dom = document.querySelector('#video-canvas-fancy');
+      var video_second = document.querySelector('#video-second');
+      
+      var canvas_copy = document.querySelector('#canvas-copy-fancy');
+      var canvas_final = document.querySelector('#canvas-final');
+      
+      var interval = null;
+      var ctx_copy = null;
+      var ctx_second = null;
+      
+      var should_bw = false;
+      var should_invert = false;
+      var should_mirror = false;
+      
+      var change_red = 1;
+      var change_green = 1;
+      var change_blue = 1;
+      
+      var frame = 0;
+      var desc = "vid3.m4v;vid4.m4v;";
+      
+      
+      video_dom.addEventListener('canplay', function() {
+        canvas_copy.width = video_dom.videoWidth;
+        canvas_copy.height = video_dom.videoHeight;
+        
+        ctx_copy = canvas_copy.getContext('2d');
+        
+        canvas_final.width = video_dom.videoWidth;
+        canvas_final.height = video_dom.videoHeight;
+        ctx_final = canvas_final.getContext('2d');
+        
+      }, false);
+      
+      
+      
+      video_dom.addEventListener('play', function() {
+        processEffectFrame();
+        if (interval == null) {
+          interval = window.setInterval(function() { processEffectFrame() }, 33);
+        }        
+      }, false);
+      
+      function processEffectFrame() {
+        frame += 1;
+        ctx_copy.drawImage(video_dom, 0, 0);
+        
+        first_start = video_dom.videoWidth / 3.0;
+        second_start = video_second.videoWidth / 3.0;
+        ctx_copy.drawImage(video_second, second_start, 0, second_start, video_second.videoHeight, first_start, 0, first_start, video_dom.videoHeight);
+        
+        var image_data = ctx_copy.getImageData(0, 0, canvas_copy.width, canvas_copy.height);
+
+        var data = image_data.data
+        
+        if (should_bw){
+          make_black_and_white(data, canvas_copy.width, canvas_copy.height);
+        }
+        
+        if (should_invert){
+          invert(data, canvas_copy.width, canvas_copy.height);
+        }
+        
+        if ((change_red != 1) || (change_blue != 1) || (change_green != 1) && (!should_bw)){
+          recolor(data, canvas_copy.width, canvas_copy.height);
+        }
+        
+        mirror(should_mirror);
+        
+        ctx_final.putImageData(image_data, 0, 0);
+      };
+      
+      video_dom.addEventListener('pause', function() {
+        window.clearInterval(interval);
+        interval = null;
+      }, false);
+      
+      video_dom.addEventListener('ended', function() {
+        clearInterval(interval);
+      }, false);
+      
+      function change_opacity(new_val){
+        desc += "frame=" + frame + ";opacity=" + new_val + ";";
+        var canvas_copy = document.querySelector('#canvas-final');
+        canvas_copy.style.opacity = new_val;
+      }
+      
+      function per_pixel_effect(data, width, height, func){
+        for (var y = 0; y < height; y += 1)
+	{
+          for (var x = 0; x < width; x += 1)
+          {
+            
+            var pixel = (y * width + x)*4;
+            var new_pixel = func(data[pixel], data[pixel + 1], data[pixel + 2], data[pixel + 3]);
+            
+            data[pixel] = new_pixel[0];
+            data[pixel+1] = new_pixel[1];
+            data[pixel+2] = new_pixel[2];
+            data[pixel+3] = new_pixel[3];
+          }	   
+    	}
+        
+      }
+      
+      function toggle_red(new_val){
+        change_red = new_val;
+        desc += "frame=" + frame + ";change_red=" + change_red + ";";
+      }
+      
+      function toggle_green(new_val){
+        change_green = new_val;
+        desc += "frame=" + frame + ";change_green=" + change_green + ";";
+      }
+      
+      function toggle_blue(new_val){
+        change_blue = new_val;
+        desc += "frame=" + frame + ";change_blue=" + change_blue + ";";
+      }
+      
+      function toggle_bw(){
+        should_bw = !should_bw;
+        desc += "frame=" + frame + ";should_bw=" + should_bw + ";";
+      }
+      
+      function make_black_and_white(data, width, height){
+        per_pixel_effect(data, width, height, function(r, g, b, a){
+            var single = r*.21 + g*.71 + b*.07;
+            return [single, single, single, a];          
+          });
+      }
+      
+      function toggle_invert(){
+        should_invert = !should_invert;
+        desc += "frame=" + frame + ";should_invert=" + should_invert + ";";
+      }
+      
+      function invert(data, width, height){
+        per_pixel_effect(data, width, height, function(r, g, b, a){
+          return [255 - r, 255 - g, 255 - b, a];
+        });
+      }
+      
+      function recolor(data, width, height){
+        per_pixel_effect(data, width, height, function(r, g, b, a){
+          return [Math.round(r * change_red), Math.round(g * change_green), Math.round(b * change_blue), a];
+        });
+      }
+      
+      function toggle_mirror(){
+        should_mirror = !should_mirror;
+        desc += "frame=" + frame + ";should_mirror=" + should_mirror + ";";
+      }
+      
+      function mirror(should_mirror){
+        if (should_mirror){
+          canvas_final.className = "mirror";
+        }
+        else {
+          canvas_final.className = "";
+        }
+      }
+      
+      function shake(){
+        desc += "frame=" + frame + ";shake=1;";
+        $("#canvas-final").effect("shake", { times:3, distance:30}, "fast");
+      }
+      
+      function post_data(){
+        var url = "saver.php";
+        var data = encodeURIComponent(desc);
+        var params = "&data=" + data;
+        var http = new XMLHttpRequest();
+        http.open("POST", url, true);
+        
+        //Send the proper header information along with the request
+        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        
+        http.onreadystatechange = function() {//Call a function when the state changes.
+                if(http.readyState == 4 && http.status == 200) {
+                        alert(http.responseText);
+                }
+        }
+        http.send(params);
+        
+      }
+      
+      function tester(){
+        post_data();
+      }
+      
+    </script>
+  </body>
+</html>
