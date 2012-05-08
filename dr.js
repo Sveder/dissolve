@@ -1,4 +1,4 @@
-//Constants:
+//Constants:  
 var MAX_VISUALS = 2;
 var MAX_SOUNDS = 6;
 
@@ -64,9 +64,28 @@ var marker_list = new Array();
 var visuals_count = 0;
 var is_audio_shown = false;
 var map;
+var canvas;
+var ctx;
+
+//Import web font:
+WebFontConfig = {
+  google: { families: [ 'Gorditas::latin' ] }
+};
+(function() {
+  var wf = document.createElement('script');
+  wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+    '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+  wf.type = 'text/javascript';
+  wf.async = 'true';
+  var s = document.getElementsByTagName('script')[0];
+  s.parentNode.insertBefore(wf, s);
+})(); 
 
 
 function initialize() {
+  canvas = document.getElementById("map-canvas");
+  ctx = canvas.getContext("2d");
+  
   //Create map:
   var center = new google.maps.LatLng(31.778602,35.213671);
   var myOptions = {
@@ -82,7 +101,7 @@ function initialize() {
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
   
-  map = new google.maps.Map(document.getElementById("left_canvas"),
+  map = new google.maps.Map(document.getElementById("map-div"),
       myOptions);
   
   
@@ -131,6 +150,10 @@ function onMarkerClick(marker){
   var tour = MARKER_LOC_LIST[marker.tag]
   var is_selected = tour.selected;
   
+  ctx.font = "bold 50px Gorditas";
+  ctx.fillStyle="#ff0000";
+  ctx.fillText(tour.name, 148, 43);
+  
   //If the marker is selected, deselect it:
   if (is_selected){
     marker.setIcon();
@@ -155,13 +178,13 @@ function onMarkerClick(marker){
     marker.setIcon(COUNT_TO_MARKER[visuals_count]);
   }
   
-  if (visuals_count == 1){
-    $("#first-audio").fadeIn('slow');
-    document.querySelector('#first-audio').setAttribute('src', tour.sound);
-  } else if (visuals_count == 0){
-    $("#first-audio").fadeOut('slow');
-    document.querySelector('#first-audio').pause();
-  }
+  //if (visuals_count == 1){
+  //  $("#first-audio").fadeIn('slow');
+  //  document.querySelector('#first-audio').setAttribute('src', tour.sound);
+  //} else if (visuals_count == 0){
+  //  $("#first-audio").fadeOut('slow');
+  //  document.querySelector('#first-audio').pause();
+  //}
   
   animate_marker(marker);
   tour.selected = !is_selected;
