@@ -150,10 +150,7 @@ function onMarkerClick(marker){
   var tour = MARKER_LOC_LIST[marker.tag]
   var is_selected = tour.selected;
   
-  ctx.font = "bold 50px Gorditas";
-  ctx.fillStyle="#ff0000";
-  ctx.fillText(tour.name, 148, 43);
-  
+ 
   //If the marker is selected, deselect it:
   if (is_selected){
     marker.setIcon();
