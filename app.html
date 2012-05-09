@@ -2,6 +2,8 @@
   <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="data.js"></script>    
+
     <style>
       video, canvas {
         margin-top: 25px;
@@ -21,14 +23,14 @@
     </style>
   </head>
   
-  <body>
+  <body onload="initialize();">
     
     <video style="display:none;" id="video-canvas-fancy" controls muted autoplay>
-      <source src="video/vid3.m4v" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
+      <source src="video/tour1.m4v" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
     </video>
     
     <video style="display:none;" id="video-second" controls muted autoplay>
-      <source src="video/vid4.m4v" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
+      <source src="video/tour2.m4v" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
     </video>
     
     <canvas style= "display:none;" id="canvas-copy-fancy"></canvas>
@@ -70,7 +72,41 @@
       var desc = "vid3.m4v;vid4.m4v;";
       
       
-      video_dom.addEventListener('canplay', function() {
+      
+      
+      function getParameterByName(name)
+      {
+        name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+        var regexS = "[\\?&]" + name + "=([^&#]*)";
+        var regex = new RegExp(regexS);
+        var results = regex.exec(window.location.search);
+        if(results == null)
+          return "";
+        else
+          return decodeURIComponent(results[1].replace(/\+/g, " "));
+      }
+      
+      function initialize(){
+        var chosen_markers = getParameterByName("markers");
+        var chosen_count = 0;
+        for (var i=0; i < chosen_markers.length; i++){
+          var is_selected = chosen_markers[i] == "V";
+          if (is_selected){
+            var tour = MARKER_LOC_LIST[i];
+            if (chosen_count == 0){
+               document.querySelector('#video-canvas-fancy').setAttribute('src', tour.video);
+            }
+            
+            if (chosen_count == 1){
+              document.querySelector('#video-second').setAttribute('src', tour.video);
+              break;
+            }
+            
+            chosen_count += 1;
+          }
+        }
+        
+        video_dom.addEventListener('canplay', function() {
         canvas_copy.width = video_dom.videoWidth;
         canvas_copy.height = video_dom.videoHeight;
         
@@ -90,6 +126,7 @@
           interval = window.setInterval(function() { processEffectFrame() }, 33);
         }        
       }, false);
+      }
       
       function processEffectFrame() {
         frame += 1;
@@ -148,6 +185,11 @@
             data[pixel+1] = new_pixel[1];
             data[pixel+2] = new_pixel[2];
             data[pixel+3] = new_pixel[3];
+            
+            if (x < 5 || x > width - 5 || y < 5 || y > height - 5){
+              console.log("alpja");
+              data[pixel+3] = 100;
+            }
           }	   
     	}
         

@@ -6,58 +6,10 @@ var BLUE_MARKER_A = "images/blue_MarkerA.png";
 var BLUE_MARKER_B = "images/blue_MarkerB.png";
 var BLUE_MARKER_C = "images/blue_MarkerC.png";
 
-var MAHNE_YEHUDA_MARKER = {
-    lat: 31.784674,
-    lng: 35.210751,
-    name: "Mahne Yehuda -> Aristobolus Street",
-    selected: false,
-    sound : "audio/mahne.mp3"
-};
-
-var JAFFA_GATE_MARKER = {
-    lat: 31.776484,
-    lng: 35.227650,
-    name: "Jaffa Gate -> Martin Buber boulevard",
-    selected: false,
-    sound : "audio/jaffa.mp3"
-};
-
-var EIN_KEREM_MARKER = {
-    lat: 31.767071,
-    lng: 35.159855,
-    name: "Ein Kerem -> Mount Scopus panorama",
-    selected: false,
-    sound : "audio/german_colony.mp3"
-};
-
-var PRAYER_MARKER = {
-    lat: 31.779327,
-    lng: 35.242638,
-    name: "Mount of Olivess",
-    selected: false,
-    sound : "audio/prayer.mp3"
-};
-
-var INDUSTRY_MARKER = {
-    lat: 31.795160,
-    lng: 35.188351,
-    name: "Saharov Gardens -> Talpiot",
-    selected: false,
-    sound : "audio/industry.mp3"
-};
-
 var COUNT_TO_MARKER = new Object();
 COUNT_TO_MARKER[1] = BLUE_MARKER_A
 COUNT_TO_MARKER[2] = BLUE_MARKER_B
 COUNT_TO_MARKER[3] = BLUE_MARKER_C
-
-var MARKER_LOC_LIST = new Object();
-MARKER_LOC_LIST[0] = MAHNE_YEHUDA_MARKER;
-MARKER_LOC_LIST[1] = JAFFA_GATE_MARKER;
-MARKER_LOC_LIST[2] = EIN_KEREM_MARKER;
-MARKER_LOC_LIST[3] = PRAYER_MARKER;
-MARKER_LOC_LIST[4] = INDUSTRY_MARKER;
-
 
 var marker_list = new Array();
 
