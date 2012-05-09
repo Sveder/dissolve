@@ -5,12 +5,6 @@
     <script type="text/javascript" src="data.js"></script>    
 
     <style>
-      video, canvas {
-        margin-top: 25px;
-        width: 100%;
-        height: 100%;
-        border: 1px solid black;
-      }
       
       .mirror {
         -moz-transform: scale(-1, 1);
@@ -24,6 +18,8 @@
   </head>
   
   <body onload="initialize();">
+    <canvas style="z-index:-1;margin:0;padding:0;border-width: 0; position: absolute; height: 100%; width: 100%;" id="canvas-final"></canvas>
+    <canvas style="height: 80%; width: 100%;"></canvas>
     
     <video style="display:none;" id="video-canvas-fancy" controls muted autoplay>
       <source src="video/tour1.m4v" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
@@ -34,7 +30,6 @@
     </video>
     
     <canvas style= "display:none;" id="canvas-copy-fancy"></canvas>
-    <canvas id="canvas-final"></canvas>
     
     </br>Change Opacity:</br>
     <input type="range" value="100" min="0" max="1" step="0.01" onchange="change_opacity(this.value)"/>
@@ -47,6 +42,8 @@
     <input type="range" value="1" min="0" max="1" step="0.1" onchange="toggle_red(this.value);"/>
     <input type="range" value="1" min="0" max="1" step="0.1" onchange="toggle_green(this.value);"/>
     <input type="range" value="1" min="0" max="1" step="0.1" onchange="toggle_blue(this.value);"/>
+    
+    <div id="audio-div"></div>
 
 
     <script>
@@ -72,8 +69,6 @@
       var desc = "vid3.m4v;vid4.m4v;";
       
       
-      
-      
       function getParameterByName(name)
       {
         name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
@@ -95,10 +90,13 @@
             var tour = MARKER_LOC_LIST[i];
             if (chosen_count == 0){
                document.querySelector('#video-canvas-fancy').setAttribute('src', tour.video);
+               add_audio_control(tour.sound);
             }
             
             if (chosen_count == 1){
               document.querySelector('#video-second').setAttribute('src', tour.video);
+              add_audio_control(tour.sound);
+
               break;
             }
             
@@ -186,10 +184,6 @@
             data[pixel+2] = new_pixel[2];
             data[pixel+3] = new_pixel[3];
             
-            if (x < 5 || x > width - 5 || y < 5 || y > height - 5){
-              console.log("alpja");
-              data[pixel+3] = 100;
-            }
           }	   
     	}
         
@@ -281,6 +275,14 @@
         post_data();
       }
       
+      function add_audio_control(audio_name){
+        var audio_element = document.createElement('span');
+        audio_element.innerHTML = "<audio id='new_audio' autostart controls='controls'><source src=" + audio_name + " type='audio/mp3'/>Your browser does not support the audio tag.</audio>";
+        
+        var audio_div = document.getElementById('audio-div');
+        audio_div.appendChild(audio_element);
+        $("#new_audio").fadeIn('slow');
+      }
     </script>
   </body>
 </html>
