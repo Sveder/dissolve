@@ -13,9 +13,11 @@ COUNT_TO_MARKER[3] = BLUE_MARKER_C
 
 var marker_list = new Array();
 
+var is_visual_chosen=false;
 var visuals_count = 0;
 var is_audio_shown = false;
 var map;
+
 
 function check(){
     if (visuals_count > 0){
@@ -79,6 +81,9 @@ function initialize() {
     marker_list.push(marker);
   }
   
+  //Set timeout that reminds users of what to do by shaking the markers:
+  setTimeout(reminder, 10000);
+  
   //Set error text:
   var txt = document.createTextNode("You can't choose more then " + MAX_VISUALS + " visuals.");
   document.querySelector('#error-div').appendChild(txt);
@@ -96,8 +101,19 @@ function initialize() {
   $("a#inline").click();
 }
 
+function reminder(){
+    if (is_visual_chosen){
+        return;
+    }
+    for (var i in marker_list){
+        var marker = marker_list[i];
+        marker.setAnimation(google.maps.Animation.DROP);
+    }
+    $("#floatMess").fadeIn("fast");
+}
 
 function onMarkerClick(marker){
+  is_visual_chosen = true;
   var tour = MARKER_LOC_LIST[marker.tag]
   var is_selected = tour.selected;
   
