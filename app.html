@@ -13,13 +13,14 @@
         transform: scale(-1, 1);
         filter: FlipH;
       }
+      #demo-frame > div.demo { padding: 10px !important; }
       
     </style>
   </head>
   
-  <body onload="initialize();">
-    <canvas style="z-index:-1;margin:0;padding:0;border-width: 0; position: absolute; height: 100%; width: 100%;" id="canvas-final"></canvas>
-    <canvas style="height: 80%; width: 100%;"></canvas>
+  <body style="background-color:lightgray;" onload="initialize();">
+    <canvas style="z-index:-1;margin:0;padding:0;border-width: 0; height: 85%; width: 100%;" id="canvas-final"></canvas>
+    
     
     <video style="display:none;" id="video-canvas-fancy" controls muted autoplay>
       <source src="video/tour1.m4v" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
@@ -30,14 +31,19 @@
     </video>
     
     <canvas style= "display:none;" id="canvas-copy-fancy"></canvas>
+    <span style="font:bold 20px sans-serif">Video Effects</span>
+    <span style="float:right; font:bold 20px sans-serif">Audio Effects</span> </br></br>
     
-    </br>Change Opacity:</br>
-    <input type="range" value="100" min="0" max="1" step="0.01" onchange="change_opacity(this.value)"/>
+    Opacity:
+    
+    <div id="slider"></div>
+
     <button type="button" onclick="toggle_bw();">Black and white</button>
     <button type="button" onclick="toggle_invert();">Invert</button>
     <button type="button" onclick="toggle_mirror();">Mirror</button>
     <button type="button" onclick="shake();">Shake</button>
     <button type="button" onclick="tester();">Frame?</button>
+    
     </br>
     <input type="range" value="1" min="0" max="1" step="0.1" onchange="toggle_red(this.value);"/>
     <input type="range" value="1" min="0" max="1" step="0.1" onchange="toggle_green(this.value);"/>
@@ -283,6 +289,7 @@
         audio_div.appendChild(audio_element);
         $("#new_audio").fadeIn('slow');
       }
+      
     </script>
   </body>
 </html>
