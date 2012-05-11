@@ -1,6 +1,7 @@
 <html>
   <head>
     <link rel="shortcut icon" href="http://sveder.com/freshpaint/favicon.ico">
+    <script type="text/javascript" src="jscolor/jscolor.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"></script>
     <script type="text/javascript" src="data.js"></script>    
@@ -46,10 +47,9 @@
     <button type="button" onclick="tester();">Frame?</button>
     
     </br>
-    <input type="range" value="1" min="0" max="1" step="0.1" onchange="toggle_red(this.value);"/>
-    <input type="range" value="1" min="0" max="1" step="0.1" onchange="toggle_green(this.value);"/>
-    <input type="range" value="1" min="0" max="1" step="0.1" onchange="toggle_blue(this.value);"/>
-    
+    <button type="button" onclick="document.getElementById('color_picker').color.showPicker();">Color Filter</button>
+    <input id="color_picker" class="color {pickerClosable:true} {pickerOnfocus:false}" onchange="color_picked(this.color);" mouseout="this.hidePicker();">
+
     <div id="audio-div"></div>
 
 
@@ -76,6 +76,12 @@
       var desc = "";
       
       var frame_effect = new Object();
+      
+      function color_picked(color){
+        toggle_red(color.rgb[0]);
+        toggle_green(color.rgb[1]);
+        toggle_blue(color.rgb[2]);
+      }
       
       
       function getParameterByName(name)
