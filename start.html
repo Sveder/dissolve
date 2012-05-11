@@ -1,5 +1,6 @@
 <html>
   <head>
+    <title>Dissolving Localities Start Page</title>
     <link rel="shortcut icon" href="http://sveder.com/freshpaint/favicon.ico">
     <link rel="stylesheet" href="fancybox/jquery.fancybox-1.3.4.css" type="text/css" media="screen" />
     <link href='http://fonts.googleapis.com/css?family=Gorditas' rel='stylesheet' type='text/css'>
@@ -53,8 +54,9 @@
   
   <body style="background-color:#F0EDE5" onload="initialize()">
     <div id="floatMess"><img id="close_message" style="float:right;cursor:pointer"  src="images/imgres.jpg" />
-      Choose two markers of tours you want to see.
+      Choose up to two markers of tours you want to see.
     </div>
+    
     
     <!-- Show instructions using fancybox -->
     <a style="display:none" id="inline" href="#data"></a>
@@ -80,37 +82,14 @@ Today I prepared your tours for you so all you should do is choose one tour or m
     
     <!--  Here be the map  -->
     <div>
-    <div id="map-div" style="margin:0px; width:100%; height:100%;"></div>
+    <div id="map-div" style="position:absolute; margin:0px; width:100%; height:100%;"></div>
+    <img height="12%" style="position:absolute; bottom:10; right:200;" onclick="check();" src="images/go.png"/>
     </div>
     
-    
     <form name="freshpaint" onsubmit="update_markers();" action="dissolve.html" method="GET">
-      
-
-<!--      -->
-<!--      <input type="checkbox" name="audio_jaffa">-->
-<!--      <audio controls="controls">-->
-<!--	<source src="audio/jaffa.mp3" type="audio/mp3"/>-->
-<!--	Your browser does not support the audio tag.-->
-<!--      </audio>-->
-<!--      </br>-->
-<!--      -->
-<!--      <input type="checkbox" name="audio_mahne">-->
-<!--      <audio style="margin-right:10px;" controls="controls">-->
-<!--	<source src="audio/mahne.mp3" type="audio/mp3"/>-->
-<!--	Your browser does not support the audio tag.-->
-<!--      </audio>-->
-<!--      -->
-<!--      <input type="checkbox" name="audio_prayer">-->
-<!--      <audio controls="controls">-->
-<!--	<source src="audio/prayer.mp3" type="audio/mp3"/>-->
-<!--	Your browser does not support the audio tag.-->
-<!--      </audio>-->
-<!--      </br>-->
-    
       <input id="markers" type="hidden" value="" name="markers">
       <input style="display:none;" id="submit-button" type="submit"/>
     </form>
-    <button onclick="check();">Xsad</button>
+    
   </body>
 </html>

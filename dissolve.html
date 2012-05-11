@@ -1,10 +1,18 @@
 <html>
   <head>
+    <title>Dissolving Localities Video App</title>
+    <link rel="stylesheet" href="fancybox/jquery.fancybox-1.3.4.css" type="text/css" media="screen" />
     <link rel="shortcut icon" href="http://sveder.com/freshpaint/favicon.ico">
     <script type="text/javascript" src="jscolor/jscolor.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="data.js"></script>    
+
+    <link type="text/css" href="css/ui-darkness/jquery-ui-1.8.20.custom.css" rel="stylesheet" />
+    <script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="js/jquery-ui-1.8.20.custom.min.js"></script>
+    <script type="text/javascript" src="data.js"></script>
+    <script type="text/javascript" src="fancybox/jquery.fancybox-1.3.4.pack.js"></script>
+    <script type="text/javascript" src="fancybox/jquery.easing-1.3.pack.js"></script>
+    <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
+
 
     <style>
       
@@ -15,12 +23,50 @@
         transform: scale(-1, 1);
         filter: FlipH;
       }
-      #demo-frame > div.demo { padding: 10px !important; }
+      
+      .ui-slider-handle
+      {
+        width: 2px;
+      }
       
     </style>
+    
+    <script>
+	$(function() {
+		$( "#opacity-slider" ).slider({
+			orientation: "vertical",
+			range: "min",
+			min: 0,
+			max: 100,
+			value: 100,
+			slide: function( event, ui ) {
+				change_opacity(ui.value);
+                        }});
+	});
+    </script>
+
   </head>
   
   <body style="background-color:lightgray;" onload="initialize();">
+    <!--  End menu fancybox  -->
+    <a style="display:none" id="video-end" href="#menu"></a>
+    <div style="display:none"><div style="background-color:black; color:#dddddd; padding:20px;" id="menu">
+    Thank you for participating in The Dissolving Localities project, we hope you have enjoyed your tour.
+    </br></br>
+    Share your trip:</br>
+    <div id="gplus-share" class="g-plus" data-action="share" data-annotation="none" data-height="15"></div>
+    <input type="text" id="share-link" style="width:400;"/>
+    </br>
+    <button type="button" onclick="to_map_screen();">Back to tour selection</button>
+    <button type="button" onclick="play_again();">Play again</button>
+    </br></br>
+    <h3 style="color:red;"> Credits: </h3>
+    
+    Emmanuel Witzthum - @witzthum6 </br>
+    Michael Sverdlin  - @msveder </br>
+    Shai Yerushalmi   - Shai@TRAILim.com </br>
+    </div></div>
+    
     <canvas style="z-index:-1;margin:0;padding:0;border-width: 0; height: 85%; width: 100%;" id="canvas-final"></canvas>
     
     
@@ -37,20 +83,17 @@
     <span style="float:right; font:bold 20px sans-serif">Audio Effects</span> </br></br>
     
     Opacity:
-    
-    <div id="slider"></div>
+    <div  id="opacity-slider"></div>
 
     <button type="button" onclick="toggle_bw();">Black and white</button>
     <button type="button" onclick="toggle_invert();">Invert</button>
     <button type="button" onclick="toggle_mirror();">Mirror</button>
-    <button type="button" onclick="shake();">Shake</button>
     <button type="button" onclick="tester();">Frame?</button>
     
+    <span style="float:right;" id="audio-div"></span>
     </br>
     <button type="button" onclick="document.getElementById('color_picker').color.showPicker();">Color Filter</button>
     <input id="color_picker" class="color {pickerClosable:true} {pickerOnfocus:false}" onchange="color_picked(this.color);" mouseout="this.hidePicker();">
-
-    <div id="audio-div"></div>
 
 
     <script>
@@ -204,6 +247,7 @@
       
       function processEffectFrame() {
         frame += 1;
+
         if (frame_effect[frame] != null){
           var parts = frame_effect[frame].split("=");
           var effect = parts[0];
@@ -226,9 +270,6 @@
               toggle_mirror();
               break;
             
-            case "shake":
-              shake();
-              break;
             
             case "toggle_red":
               toggle_red(new_val);
@@ -371,7 +412,21 @@
       
       
       function show_link(link_text){
-        alert(link_text);
+        var url = "sveder.com/freshpaint/dissolve.html?replay=" + link_text;
+        var input = document.getElementById("share-link");
+        input.value = url;
+        
+               
+        $("a#video-end").fancybox({
+                'transitionIn'	:	'fade',
+		'transitionOut'	:	'fade',
+		'speedIn'	:	600, 
+		'speedOut'	:	200,
+                'padding'       :       0,
+	});
+        $("a#video-end").click();
+        
+        $("g-plus").fadeOut();
       }
       
       function playback_ended(){
@@ -404,7 +459,7 @@
       
       function add_audio_control(audio_name){
         var audio_element = document.createElement('span');
-        audio_element.innerHTML = "<audio id='new_audio' autoplay controls='controls'><source src=" + audio_name + " type='audio/mp3'/>Your browser does not support the audio tag.</audio>";
+        audio_element.innerHTML = "<audio style='float:right' id='new_audio' autoplay controls='controls'><source src=" + audio_name + " type='audio/mp3'/>Your browser does not support the audio tag.</audio>";
         
         var audio_div = document.getElementById('audio-div');
         audio_div.appendChild(audio_element);
