@@ -32,7 +32,7 @@ var PRAYER_MARKER = {
     list_loc: 3,
     lat: 31.779327,
     lng: 35.242638,
-    name: "Mount of Olivess",
+    name: "Mount of Olives",
     selected: false,
     sound : "audio/prayer.mp3",
     video : "video/prayer.m4v"
