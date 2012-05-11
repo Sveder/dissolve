@@ -29,7 +29,7 @@
     </video>
     
     <video style="display:none;" id="video-second" controls muted autoplay>
-      <source src="video/tour2.m4v" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
+      <source src="" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
     </video>
     
     <canvas style= "display:none;" id="canvas-copy-fancy"></canvas>
@@ -76,6 +76,7 @@
       var desc = "";
       
       var frame_effect = new Object();
+
       
       function color_picked(color){
         toggle_red(color.rgb[0]);
@@ -277,6 +278,7 @@
       
       video_dom.addEventListener('ended', function() {
         clearInterval(interval);
+        playback_ended();
       }, false);
       
       function change_opacity(new_val){
@@ -367,6 +369,15 @@
         $("#canvas-final").effect("shake", { times:3, distance:30}, "fast");
       }
       
+      
+      function show_link(link_text){
+        alert(link_text);
+      }
+      
+      function playback_ended(){
+        post_data();
+      }
+      
       function post_data(){
         var url = "saver.php";
         var data = encodeURIComponent(desc);
@@ -379,8 +390,8 @@
         
         http.onreadystatechange = function() {//Call a function when the state changes.
                 if(http.readyState == 4 && http.status == 200) {
-                        link_text = http.responseText;
-                        console.log(link_text);
+                        show_link(http.responseText);
+                        
                 }
         }
         http.send(params);
