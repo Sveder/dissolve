@@ -4,8 +4,9 @@ var MAHNE_YEHUDA_MARKER = {
     lng: 35.210751,
     name: "Mahne Yehuda -> Aristobolus Street",
     selected: false,
-    sound : "audio/mahne.mp3",
-    video : "video/tour1.m4v"
+    sound : "audio/tour1.mp3",
+    video : "video/tour1.m4v",
+    preview : "images/tour1.png"
 };
 
 var JAFFA_GATE_MARKER = {
@@ -14,8 +15,9 @@ var JAFFA_GATE_MARKER = {
     lng: 35.227650,
     name: "Jaffa Gate -> Martin Buber boulevard",
     selected: false,
-    sound : "audio/jaffa.mp3",
-    video : "video/tour2.m4v"
+    sound : "audio/tour2.mp3",
+    video : "video/tour2.m4v",
+    preview : "images/tour2.png"
 };
 
 var EIN_KEREM_MARKER = {
@@ -24,8 +26,9 @@ var EIN_KEREM_MARKER = {
     lng: 35.159855,
     name: "Ein Kerem -> Mount Scopus panorama",
     selected: false,
-    sound : "audio/german_colony.mp3",
-    video : "video/tour3.m4v"
+    sound : "audio/tour3.mp3",
+    video : "video/tour3.m4v",
+    preview : "images/tour3.png"
 };
 
 var PRAYER_MARKER = {
@@ -35,7 +38,8 @@ var PRAYER_MARKER = {
     name: "Mount of Olives",
     selected: false,
     sound : "audio/prayer.mp3",
-    video : "video/prayer.m4v"
+    video : "video/prayer.m4v",
+    preview : "images/prayer.png"
 };
 
 var INDUSTRY_MARKER = {
@@ -45,7 +49,8 @@ var INDUSTRY_MARKER = {
     name: "Saharov Gardens -> Talpiot",
     selected: false,
     sound : "audio/industry.mp3",
-    video : "video/industry.m4v"
+    video : "video/industry.m4v",
+    preview : "images/industry.png"
 };
 
 var MARKER_LOC_LIST = new Object();

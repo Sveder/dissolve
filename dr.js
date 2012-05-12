@@ -29,23 +29,21 @@ function check(){
 		'transitionOut'	:	'fade',
 		'speedIn'	:	600, 
 		'speedOut'	:	200,
-                'padding'       :       0,
+                'padding'       :       0
 	});
       $("a#select-more").click(); 
-        
     }
 }
 
 function initialize() {
   
   //Create map:
-  var center = new google.maps.LatLng(31.778602,35.213671);
+  var center = new google.maps.LatLng(31.788602,35.193671);
   var myOptions = {
     scrollwheel: false,
     navigationControl: false,
     mapTypeControl: false,
     scaleControl: false,
-    draggable: false,
     streetViewControl: false,
     disableDefaultUI: true,
     center: center,
@@ -74,9 +72,24 @@ function initialize() {
     cur_pos += 1;
     
     google.maps.event.addListener(marker, 'click', function() {
-      onMarkerClick(this);
-      
+        onMarkerClick(this);
       });
+    
+    google.maps.event.addListener(marker, 'mouseover', function() {
+          var tour = MARKER_LOC_LIST[this.tag]
+            console.log(tour.preview);
+          var content_string = tour.name + "</br><img style='margin=10px; height: 150px; width:150px;' src='" + tour.preview + "'/>";
+          var infowindow = new google.maps.InfoWindow({
+            content: content_string
+            });
+          infowindow.open(map, this);
+          this.window=infowindow;
+      });
+    
+    google.maps.event.addListener(marker, 'mouseout', function() {
+          this.window.close();
+      });
+    
     marker_list.push(marker);
   }
   

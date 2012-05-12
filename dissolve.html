@@ -66,9 +66,10 @@
     Emmanuel Witzthum - @witzthum6 </br>
     Michael Sverdlin  - @msveder </br>
     Shai Yerushalmi   - Shai@TRAILim.com </br>
+    <!--<img height="20%" style="position:absolute; bottom:10; right:200;" onclick="check();" src="images/go.png"/>-->
     </div></div>
     
-    <canvas style="z-index:-1;margin:0;padding:0;border-width: 0; height: 75%; width: 100%;" id="canvas-final"></canvas>
+    <canvas style="z-index:-1;margin:0;padding:0;border-width: 0; height: 80%; width: 100%;" id="canvas-final"></canvas>
     
     
     <video style="display:none;" id="video-canvas-fancy" controls muted autoplay>
@@ -88,9 +89,11 @@
     <div id="opacity-slider" style="width:200px; height:10px;margin:15px;"></div>
 
     <button type="button" onclick="toggle_bw();">Black and white</button>
+    <button type="button" onclick="toggle_sepia();">Sepia</button>
     <button type="button" onclick="toggle_invert();">Invert</button>
     <button type="button" onclick="toggle_mirror();">Mirror</button>
-    <button type="button" onclick="tester();">Frame?</button>
+    <button type="button" onclick="switch_middle();">Switch Videos</button>
+    <button type="button" onclick="post_data();">Stop Video</button>
     
     
     </br>
@@ -112,6 +115,8 @@
       var should_bw = false;
       var should_invert = false;
       var should_mirror = false;
+      var should_sepia = false;
+      var should_switch = false;
       
       var change_red = 1;
       var change_green = 1;
@@ -121,14 +126,13 @@
       var desc = "";
       
       var frame_effect = new Object();
+      
+      var effect_pipeline =  $.makeArray(arr[i]);
 
       
       function color_picked(color){
-        toggle_red(color.rgb[0]);
-        toggle_green(color.rgb[1]);
-        toggle_blue(color.rgb[2]);
+        change_colors(color.rgb[0], color.rgb[1], color.rgb[2]);
       }
-      
       
       function getParameterByName(name)
       {
@@ -144,7 +148,7 @@
       
       function prep_replay(link_text){
         console.log("moo");
-        var url = "reader.php?link_text=" + link_text;
+        var url = "http://sveder.com/freshpaint/reader.php?link_text=" + link_text;
         var data = encodeURIComponent(link_text);
         var http = new XMLHttpRequest();
         http.open("GET", url, true);
@@ -185,7 +189,12 @@
           } else if (command[0] == "frame"){
             var frame_num = parseInt(command[1]);
             i += 1;
-            frame_effect[frame_num] = parts[i];
+            
+            if (frame_effect[frame_num] == null){
+              frame_effect[frame_num] = parts[i];
+            } else {
+              frame_effect[frame_num] += parts[i];
+            }
           }
           i += 1;
         }
@@ -268,30 +277,33 @@
               toggle_invert();
               break;
             
+            case "should_sepia":
+              toggle_sepia();
+              break;
+            
             case "should_mirror":
               toggle_mirror();
               break;
             
-            
-            case "toggle_red":
-              toggle_red(new_val);
-              break;
-            
-            case "toggle_green":
-              toggle_green(new_val);
-              break;
-            
-            case "toggle_blue":
-              toggle_blue(new_val);
-              break;
+            case "color":
+              var color_parts = parts[1].split(",");
+              change_colors(color_parts[0], color_parts[1], color_parts[2])
           }
         }
         
-        ctx_copy.drawImage(video_dom, 0, 0);
+        var outer_video = video_dom;
+        var inner_video = video_second;
         
-        first_start = video_dom.videoWidth / 3.0;
-        second_start = video_second.videoWidth / 3.0;
-        ctx_copy.drawImage(video_second, second_start, 0, second_start, video_second.videoHeight, first_start, 0, first_start, video_dom.videoHeight);
+        if (should_switch){
+          outer_video = video_second;
+          inner_video = video_dom;
+        }
+        
+        ctx_copy.drawImage(outer_video, 0, 0);
+        
+        first_start = outer_video.videoWidth / 3.0;
+        second_start = inner_video.videoWidth / 3.0;
+        ctx_copy.drawImage(inner_video, second_start, 0, second_start, inner_video.videoHeight, first_start, 0, first_start, outer_video.videoHeight);
         
         var image_data = ctx_copy.getImageData(0, 0, canvas_copy.width, canvas_copy.height);
 
@@ -303,6 +315,10 @@
         
         if (should_invert){
           invert(data, canvas_copy.width, canvas_copy.height);
+        }
+        
+        if (should_sepia){
+          sepia(data, canvas_copy.width, canvas_copy.height);
         }
         
         if ((change_red != 1) || (change_blue != 1) || (change_green != 1) && (!should_bw)){
@@ -345,29 +361,51 @@
             data[pixel+2] = new_pixel[2];
             data[pixel+3] = new_pixel[3];
             
+            
+            if ((y == 0) || (x == 0) || (y == height - 1) || (x == width - 1)){
+              data[pixel+3] = 50;
+            }
+            
+            if ((y == 1) || (x == 1) || (y == height - 2) || (x == width - 2)){
+              data[pixel+3] = 100;
+            }
+            
+            if ((y == 2) || (x == 2) || (y == height - 3) || (x == width - 3)){
+              data[pixel+3] = 150;
+            }
+            
+            if ((y == 3) || (x == 3) || (y == height - 4) || (x == width - 4)){
+              data[pixel+3] = 200;
+            }
+            
+            if ((y == 4) || (x == 4) || (y == height - 5) || (x == width - 5)){
+              data[pixel+3] = 250;
+            }
+            
           }	   
     	}
-        
       }
       
-      function toggle_red(new_val){
-        change_red = new_val;
-        desc += "frame=" + frame + ";change_red=" + change_red + ";";
-      }
-      
-      function toggle_green(new_val){
-        change_green = new_val;
-        desc += "frame=" + frame + ";change_green=" + change_green + ";";
-      }
-      
-      function toggle_blue(new_val){
-        change_blue = new_val;
-        desc += "frame=" + frame + ";change_blue=" + change_blue + ";";
+      function change_colors(r, g, b){
+        change_red = r;
+        change_green = g;
+        change_blue = b;
+        desc += "frame=" + frame + ";color=" + r + "," + g + "," + b + ";";
       }
       
       function toggle_bw(){
         should_bw = !should_bw;
         desc += "frame=" + frame + ";should_bw=" + should_bw + ";";
+      }
+      
+      function toggle_sepia(){
+        should_sepia = !should_sepia;
+        desc += "frame=" + frame + ";should_sepia=" + should_sepia + ";";
+      }
+      
+      function switch_middle(){
+        should_switch = !should_switch;
+        desc += "frame=" + frame + ";should_switch=" + should_switch + ";";
       }
       
       function make_black_and_white(data, width, height){
@@ -391,6 +429,15 @@
       function recolor(data, width, height){
         per_pixel_effect(data, width, height, function(r, g, b, a){
           return [Math.round(r * change_red), Math.round(g * change_green), Math.round(b * change_blue), a];
+        });
+      }
+      
+      function sepia(data, width, height){
+        per_pixel_effect(data, width, height, function(r, g, b, a){
+          new_r = (r * .393) + (g *.769) + (b * .189);
+          new_g = (r * .349) + (g *.686) + (b * .168);
+          new_b = (r * .272) + (g *.534) + (b * .131);
+          return [new_r, new_g, new_b, a];
         });
       }
       
@@ -437,7 +484,7 @@
       }
       
       function post_data(){
-        var url = "saver.php";
+        var url = "http://sveder.com/freshpaint/saver.php";
         var data = encodeURIComponent(desc);
         var params = "&data=" + data;
         var http = new XMLHttpRequest();
@@ -456,9 +503,6 @@
         
       }
       
-      function tester(){
-        post_data();
-      }
       
       function add_audio_control(audio_name, tour_name){
         var audio_element = document.createElement('span');
@@ -469,6 +513,14 @@
         var audio_div = document.getElementById('audio-div');
         audio_div.appendChild(audio_element);
         $("#new_audio").fadeIn('slow');
+      }
+      
+      function to_map_screen(){
+        document.location.href = "start.html";
+      }
+      
+      function play_again(){
+        window.location.reload();
       }
       
     </script>
