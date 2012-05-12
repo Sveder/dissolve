@@ -34,13 +34,14 @@
     <script>
 	$(function() {
 		$( "#opacity-slider" ).slider({
-			orientation: "vertical",
 			range: "min",
 			min: 0,
-			max: 100,
+			max: 1,
+                        step: 0.1,
 			value: 100,
 			slide: function( event, ui ) {
 				change_opacity(ui.value);
+                                console.log("hi:" + ui.value);
                         }});
 	});
     </script>
@@ -67,7 +68,7 @@
     Shai Yerushalmi   - Shai@TRAILim.com </br>
     </div></div>
     
-    <canvas style="z-index:-1;margin:0;padding:0;border-width: 0; height: 85%; width: 100%;" id="canvas-final"></canvas>
+    <canvas style="z-index:-1;margin:0;padding:0;border-width: 0; height: 75%; width: 100%;" id="canvas-final"></canvas>
     
     
     <video style="display:none;" id="video-canvas-fancy" controls muted autoplay>
@@ -80,17 +81,18 @@
     
     <canvas style= "display:none;" id="canvas-copy-fancy"></canvas>
     <span style="font:bold 20px sans-serif">Video Effects</span>
-    <span style="float:right; font:bold 20px sans-serif">Audio Effects</span> </br></br>
+    <span style="float:right; font:bold 20px sans-serif">Audio Control</span> </br></br>
+    <span style="float:right;" id="audio-div"></span>
     
     Opacity:
-    <div  id="opacity-slider"></div>
+    <div id="opacity-slider" style="width:200px; height:10px;margin:15px;"></div>
 
     <button type="button" onclick="toggle_bw();">Black and white</button>
     <button type="button" onclick="toggle_invert();">Invert</button>
     <button type="button" onclick="toggle_mirror();">Mirror</button>
     <button type="button" onclick="tester();">Frame?</button>
     
-    <span style="float:right;" id="audio-div"></span>
+    
     </br>
     <button type="button" onclick="document.getElementById('color_picker').color.showPicker();">Color Filter</button>
     <input id="color_picker" class="color {pickerClosable:true} {pickerOnfocus:false}" onchange="color_picked(this.color);" mouseout="this.hidePicker();">
@@ -170,7 +172,7 @@
             console.log("videp = " + loc);
             desc += "video_first=" + loc + ";";
             document.querySelector('#video-canvas-fancy').setAttribute('src', tour.video);
-            add_audio_control(tour.sound);
+            add_audio_control(tour.sound, tour.name);
 
           } else if (command[0] == "video_second"){
             var loc = parseInt(command[1]);
@@ -178,7 +180,7 @@
             console.log("videp = " + loc);
             desc += "video_second=" + loc + ";";
             document.querySelector('#video-second').setAttribute('src', tour.video);
-            add_audio_control(tour.sound);
+            add_audio_control(tour.sound, tour.name);
             
           } else if (command[0] == "frame"){
             var frame_num = parseInt(command[1]);
@@ -206,13 +208,13 @@
               if (chosen_count == 0){
                  desc += "video_first=" + i + ";";
                  document.querySelector('#video-canvas-fancy').setAttribute('src', tour.video);
-                 add_audio_control(tour.sound);
+                 add_audio_control(tour.sound, tour.name);
               }
               
               if (chosen_count == 1){
                 desc += "video_second=" + i + ";";
                 document.querySelector('#video-second').setAttribute('src', tour.video);
-                add_audio_control(tour.sound);
+                add_audio_control(tour.sound, tour.name);
   
                 break;
               }
@@ -221,8 +223,8 @@
             }
           }
         }
-        add_audio_control("audio/ambient.mp3");
-        add_audio_control("audio/beats.mp3");
+        add_audio_control("audio/ambient.mp3", "Ambient");
+        add_audio_control("audio/beats.mp3", "Beats");
         
         video_dom.addEventListener('canplay', function() {
         canvas_copy.width = video_dom.videoWidth;
@@ -323,6 +325,7 @@
       }, false);
       
       function change_opacity(new_val){
+        console.log(new_val);
         desc += "frame=" + frame + ";opacity=" + new_val + ";";
         var canvas_copy = document.querySelector('#canvas-final');
         canvas_copy.style.opacity = new_val;
@@ -457,9 +460,11 @@
         post_data();
       }
       
-      function add_audio_control(audio_name){
+      function add_audio_control(audio_name, tour_name){
         var audio_element = document.createElement('span');
-        audio_element.innerHTML = "<audio style='float:right' id='new_audio' autoplay controls='controls'><source src=" + audio_name + " type='audio/mp3'/>Your browser does not support the audio tag.</audio>";
+        var inner = "<audio style='float:right; width=50px; margin-left:7px; margin-right:7px;' id='new_audio' autoplay controls='Volume'><source src=" + audio_name + " type='audio/mp3'/>Your browser does not support the audio tag.</audio>";
+        inner += "<bold style='float:right'>" + tour_name + "</bold></br>";
+        audio_element.innerHTML = inner;
         
         var audio_div = document.getElementById('audio-div');
         audio_div.appendChild(audio_element);
