@@ -17,6 +17,8 @@ var visuals_count = 0;
 var is_audio_shown = false;
 var map;
 
+var windows = new Array();
+
 
 function check(){
     if (visuals_count > 0){
@@ -77,17 +79,20 @@ function initialize() {
     
     google.maps.event.addListener(marker, 'mouseover', function() {
           var tour = MARKER_LOC_LIST[this.tag]
-            console.log(tour.preview);
           var content_string = tour.name + "</br><img style='margin=10px; height: 150px; width:150px;' src='" + tour.preview + "'/>";
+          
           var infowindow = new google.maps.InfoWindow({
             content: content_string
             });
           infowindow.open(map, this);
           this.window=infowindow;
+          windows.push(infowindow);
       });
     
     google.maps.event.addListener(marker, 'mouseout', function() {
-          this.window.close();
+        for (var i in windows){
+            windows[i].close();
+        }
       });
     
     marker_list.push(marker);

@@ -56,24 +56,23 @@
     </br></br>
     Share your trip:</br>
 
-<!-- SMARTADDON BEGIN -->
-<script type="text/javascript">
-(function() {
-var s=document.createElement('script');s.type='text/javascript';s.async = true;
-s.src='http://s1.smartaddon.com/share_addon.js';
-var j =document.getElementsByTagName('script')[0];j.parentNode.insertBefore(s,j);
-})();
-</script>
-
-<div id="sa_share_bar">
-<a id="sa_share_facebook" layout="icon" size="24"></a>
-<a id="sa_share_twitter" layout="icon" size="24"></a>
-<a id="sa_share_googleplus" layout="icon" size="24"></a>
-<a id="sa_share_email" layout="icon" size="24"></a>
-<a id="sa_share_share" layout="icon" size="24"></a>
-</div>
-
-<!-- SMARTADDON END -->
+    <!-- SMARTADDON BEGIN -->
+    <script type="text/javascript">
+    (function() {
+    var s=document.createElement('script');s.type='text/javascript';s.async = true;
+    s.src='http://s1.smartaddon.com/share_addon.js';
+    var j =document.getElementsByTagName('script')[0];j.parentNode.insertBefore(s,j);
+    })();
+    </script>
+    
+    <div id="sa_share_bar" onclick="share_by_mail();">
+    <a id="sa_share_facebook" layout="icon" size="24"></a>
+    <a id="sa_share_twitter" layout="icon" size="24"></a>
+    <a id="sa_share_googleplus" layout="icon" size="24"></a>
+    <a onclick="share_by_mail(); "id="sa_share_email" layout="icon" size="24"></a>
+        </div>
+    
+    <!-- SMARTADDON END -->
 
     <input type="text" id="share-link" style="width:400;"/>
     </br>
@@ -112,7 +111,7 @@ var j =document.getElementsByTagName('script')[0];j.parentNode.insertBefore(s,j)
     <button type="button" onclick="toggle_invert();">Invert</button>
     <button type="button" onclick="toggle_mirror();">Mirror</button>
     <button type="button" onclick="switch_middle();">Switch Videos</button>
-    <button type="button" onclick="post_data();">Stop Video</button>
+    <button type="button" onclick="stop_video();">Stop Video</button>
     
     
     </br>
@@ -146,6 +145,8 @@ var j =document.getElementsByTagName('script')[0];j.parentNode.insertBefore(s,j)
       
       var frame_effect = new Object();
       var effect_pipeline =  new Object();
+      
+      var stop_everything = false;
       
       function color_picked(color){
         change_colors(color.rgb[0], color.rgb[1], color.rgb[2]);
@@ -274,6 +275,9 @@ var j =document.getElementsByTagName('script')[0];j.parentNode.insertBefore(s,j)
       }
       
       function processEffectFrame() {
+	if (stop_everything){
+	  return;
+	}
         frame += 1;
 
         if (frame_effect[frame] != null){
@@ -586,13 +590,12 @@ var j =document.getElementsByTagName('script')[0];j.parentNode.insertBefore(s,j)
                 }
         }
         http.send(params);
-        
       }
       
       
       function add_audio_control(audio_name, tour_name){
         var audio_element = document.createElement('span');
-        var inner = "<audio style='float:right; width=50px; margin-left:7px; margin-right:7px;' id='new_audio' autoplay controls='Volume'><source src=" + audio_name + " type='audio/mp3'/>Your browser does not support the audio tag.</audio>";
+        var inner = "<audio class='moo' style='float:right; width=50px; margin-left:7px; margin-right:7px;' id='new_audio' autoplay controls='Volume'><source src=" + audio_name + " type='audio/mp3'/>Your browser does not support the audio tag.</audio>";
         inner += "<bold style='float:right'>" + tour_name + "</bold></br>";
         audio_element.innerHTML = inner;
         
@@ -607,6 +610,22 @@ var j =document.getElementsByTagName('script')[0];j.parentNode.insertBefore(s,j)
       
       function play_again(){
         window.location.reload();
+      }
+      
+      function share_by_mail(){
+	$.fancybox.close();
+      }
+      
+      function stop_video(){
+	stop_everything = true;
+	var audios = $(".moo");
+	for (var i in audios){
+	  try {
+	    audios[i].pause(); 
+	  } catch (err){}
+	}
+	
+	post_data();
       }
       
     </script>
