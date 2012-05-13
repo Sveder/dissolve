@@ -1,0 +1,56 @@
+application: dissolve
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: yes
+
+handlers:
+
+- url: /images
+  static_dir: images
+  
+- url: /audio
+  static_dir: audio
+  
+- url: /video
+  static_dir: video
+  
+- url: /fancybox
+  static_dir: fancybox
+
+- url: /js
+  static_dir: js
+
+- url: /jscolor
+  static_dir: jscolor
+  
+- url: /css
+  static_dir: css
+  
+- url: /start.html
+  static_files: start.html
+  upload: start\.html
+  
+- url: /dissolve.html
+  static_files: dissolve.html
+  upload: dissolve\.html
+
+- url: /data.js
+  static_files: data.js
+  upload: data\.js
+  
+- url: /dr.js
+  static_files: dr.js
+  upload: dr\.js
+
+- url: /favicon\.ico
+  static_files: favicon.ico
+  upload: favicon\.ico
+
+- url: .*
+  script: main.app
+
+libraries:
+- name: webapp2
+  version: "2.5.1"
+
