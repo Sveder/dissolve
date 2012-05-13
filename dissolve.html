@@ -49,17 +49,36 @@
   </head>
   
   <body style="background-color:lightgray;" onload="initialize();">
-    <!--  End menu fancybox  -->
+
     <a style="display:none" id="video-end" href="#menu"></a>
-    <div style="display:none"><div style="background-color:black; color:#dddddd; padding:20px;" id="menu">
+    <div style="display:none;"><div style="background-color:black; color:#dddddd; padding:20px;" id="menu">
     Thank you for participating in The Dissolving Localities project, we hope you have enjoyed your tour.
     </br></br>
     Share your trip:</br>
-    <div id="gplus-share" class="g-plus" data-action="share" data-annotation="none" data-height="15"></div>
+
+<!-- SMARTADDON BEGIN -->
+<script type="text/javascript">
+(function() {
+var s=document.createElement('script');s.type='text/javascript';s.async = true;
+s.src='http://s1.smartaddon.com/share_addon.js';
+var j =document.getElementsByTagName('script')[0];j.parentNode.insertBefore(s,j);
+})();
+</script>
+
+<div id="sa_share_bar">
+<a id="sa_share_facebook" layout="icon" size="24"></a>
+<a id="sa_share_twitter" layout="icon" size="24"></a>
+<a id="sa_share_googleplus" layout="icon" size="24"></a>
+<a id="sa_share_email" layout="icon" size="24"></a>
+<a id="sa_share_share" layout="icon" size="24"></a>
+</div>
+
+<!-- SMARTADDON END -->
+
     <input type="text" id="share-link" style="width:400;"/>
     </br>
     <button type="button" onclick="to_map_screen();">Back to tour selection</button>
-    <button type="button" onclick="play_again();">Play again</button>
+    <button type="button" onclick="play_again();">Replay video</button>
     </br></br>
     <h3 style="color:red;"> Credits: </h3>
     
@@ -126,9 +145,7 @@
       var desc = "";
       
       var frame_effect = new Object();
-      
-      var effect_pipeline =  $.makeArray(arr[i]);
-
+      var effect_pipeline =  new Object();
       
       function color_picked(color){
         change_colors(color.rgb[0], color.rgb[1], color.rgb[2]);
@@ -147,7 +164,6 @@
       }
       
       function prep_replay(link_text){
-        console.log("moo");
         var url = "http://sveder.com/freshpaint/reader.php?link_text=" + link_text;
         var data = encodeURIComponent(link_text);
         var http = new XMLHttpRequest();
@@ -209,6 +225,7 @@
         else {
         
           var chosen_markers = getParameterByName("markers");
+	  
           var chosen_count = 0;
           for (var i=0; i < chosen_markers.length; i++){
             var is_selected = chosen_markers[i] == "V";
@@ -322,9 +339,15 @@
         }
         
         if ((change_red != 1) || (change_blue != 1) || (change_green != 1) && (!should_bw)){
+          //effect_pipeline["colorize"] = recolor;
           recolor(data, canvas_copy.width, canvas_copy.height);
         }
-        
+        //else {
+        //  effect_pipeline["colorize"] = undefined;
+        //}
+//        
+        //render(data, canvas_copy.width, canvas_copy.height);
+                
         mirror(should_mirror);
         
         ctx_final.putImageData(image_data, 0, 0);
@@ -346,6 +369,54 @@
         var canvas_copy = document.querySelector('#canvas-final');
         canvas_copy.style.opacity = new_val;
       }
+      
+//      function render(data, width, height){
+//        for (var y = 0; y < height; y += 1)
+//	{
+//          for (var x = 0; x < width; x += 1)
+//          {
+//            
+//            var pixel = (y * width + x)*4;
+//            
+//            var new_pixel = [data[pixel], data[pixel + 1], data[pixel + 2], data[pixel + 3]];
+//            
+//            //for (var step in effect_pipeline){
+//            //  var effect = effect_pipeline[step];
+//            //
+//            //  if ((effect != null) && (effect != undefined)){
+//            //    new_pixel = effect(data[pixel], data[pixel + 1], data[pixel + 2], data[pixel + 3]);
+//            //  }
+//            //}
+//            
+//            data[pixel] = new_pixel[0];
+//            data[pixel+1] = new_pixel[1];
+//            data[pixel+2] = new_pixel[2];
+//            data[pixel+3] = new_pixel[3];
+//            
+//            
+//            if ((y == 0) || (x == 0) || (y == height - 1) || (x == width - 1)){
+//              data[pixel+3] = 50;
+//            }
+//            
+//            if ((y == 1) || (x == 1) || (y == height - 2) || (x == width - 2)){
+//              data[pixel+3] = 100;
+//            }
+//            
+//            if ((y == 2) || (x == 2) || (y == height - 3) || (x == width - 3)){
+//              data[pixel+3] = 150;
+//            }
+//            
+//            if ((y == 3) || (x == 3) || (y == height - 4) || (x == width - 4)){
+//              data[pixel+3] = 200;
+//            }
+//            
+//            if ((y == 4) || (x == 4) || (y == height - 5) || (x == width - 5)){
+//              data[pixel+3] = 250;
+//            }
+//            
+//          }	   
+//    	}
+//      }
       
       function per_pixel_effect(data, width, height, func){
         for (var y = 0; y < height; y += 1)
@@ -390,16 +461,29 @@
         change_red = r;
         change_green = g;
         change_blue = b;
+        
         desc += "frame=" + frame + ";color=" + r + "," + g + "," + b + ";";
       }
       
       function toggle_bw(){
         should_bw = !should_bw;
+        //if (should_bw){
+        //  effect_pipeline["bw"] = make_black_and_white;
+        //} else {
+        //  effect_pipeline["bw"] = undefined;
+        //}
         desc += "frame=" + frame + ";should_bw=" + should_bw + ";";
       }
       
       function toggle_sepia(){
         should_sepia = !should_sepia;
+        
+        //if (should_sepia){
+        //  effect_pipeline["sepia"] = sepia;
+        //} else {
+        //  effect_pipeline["sepia"] = undefined;
+        //}
+        
         desc += "frame=" + frame + ";should_sepia=" + should_sepia + ";";
       }
       
@@ -417,6 +501,13 @@
       
       function toggle_invert(){
         should_invert = !should_invert;
+        
+        //if (should_invert){
+        //  effect_pipeline["invert"] = invert;
+        //} else {
+        //  effect_pipeline["invert"] = undefined;
+        //}
+        
         desc += "frame=" + frame + ";should_invert=" + should_invert + ";";
       }
       
@@ -454,14 +545,9 @@
           canvas_final.className = "";
         }
       }
-      
-      function shake(){
-        desc += "frame=" + frame + ";shake=1;";
-        $("#canvas-final").effect("shake", { times:3, distance:30}, "fast");
-      }
-      
-      
+            
       function show_link(link_text){
+        history.pushState({}, "page 2", "dissolve.html?replay=" + link_text);
         var url = "sveder.com/freshpaint/dissolve.html?replay=" + link_text;
         var input = document.getElementById("share-link");
         input.value = url;
