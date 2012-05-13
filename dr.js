@@ -40,16 +40,17 @@ function check(){
 function initialize() {
   
   //Create map:
-  var center = new google.maps.LatLng(31.788602,35.193671);
+  var center = new google.maps.LatLng(31.784602,35.211671);
   var myOptions = {
     scrollwheel: false,
+    draggable: false,
     navigationControl: false,
     mapTypeControl: false,
     scaleControl: false,
     streetViewControl: false,
     disableDefaultUI: true,
     center: center,
-    zoom: 13,
+    zoom: 14,
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
   
@@ -96,7 +97,14 @@ function initialize() {
       });
     
     marker_list.push(marker);
+    
+    document.addEventListener("orientationChanged", updateOrientation, false);
   }
+  
+  function updateOrientation(e) {
+    wrapperH = window.innerHeight;
+    document.getElementById('map-div').style.height = wrapperH + 'px';
+}
   
   //Set error text:
   var txt = document.createTextNode("You can't choose more then " + MAX_VISUALS + " visuals.");
