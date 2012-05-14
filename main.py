@@ -24,15 +24,16 @@ import logging
 
 class MainHandler(webapp2.RequestHandler):
     def get(self):
-        token = channel.create_channel("moo")
-        template_values = {'token': token}
+        token = channel.create_channel("start_channel")
         
         rendered = template.render('index.html', template_values)
         self.response.out.write(rendered)
 
 class MooHandler(webapp2.RequestHandler):
     def post(self):
-        channel.send_message("moo", "1234")
+        data = self.request.get("data")
+        channel.send_message("start_channel", data)
 
-app = webapp2.WSGIApplication([('/', MainHandler), ("/moo", MooHandler)], debug=True)
+app = webapp2.WSGIApplication([('/', MainHandler),
+                               ("/start_web_app", MooHandler)], debug=True)
 

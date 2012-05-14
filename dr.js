@@ -19,26 +19,10 @@ var map;
 
 var windows = new Array();
 
-
-function check(){
-    if (visuals_count > 0){
-        document.getElementById("submit-button").click();
-    }
-    else {
-        $("a#select-more").fancybox({
-		'hideOnContentClick': true,
-                'transitionIn'	:	'fade',
-		'transitionOut'	:	'fade',
-		'speedIn'	:	600, 
-		'speedOut'	:	200,
-                'padding'       :       0
-	});
-      $("a#select-more").click(); 
-    }
-}
+function check(){}
 
 function initialize() {
-  
+    
   //Create map:
   var center = new google.maps.LatLng(31.784602,35.211671);
   var myOptions = {
@@ -194,4 +178,5 @@ function update_markers(){
   }
   
   document.forms["freshpaint"]["markers"].value = chosen;
+}
 }
