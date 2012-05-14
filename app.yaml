@@ -31,6 +31,10 @@ handlers:
   static_files: start.html
   upload: start\.html
   
+- url: /tstart.html
+  static_files: tstart.html
+  upload: tstart\.html
+  
 - url: /dissolve.html
   static_files: dissolve.html
   upload: dissolve\.html
@@ -42,6 +46,14 @@ handlers:
 - url: /dr.js
   static_files: dr.js
   upload: dr\.js
+
+- url: /add_web.js
+  static_files: add_web.js
+  upload: add_web\.js
+
+- url: /add_tablet.js
+  static_files: add_tablet.js
+  upload: add_tablet\.js
 
 - url: /favicon\.ico
   static_files: favicon.ico
