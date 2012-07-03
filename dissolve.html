@@ -28,6 +28,10 @@
       {
         width: 2px;
       }
+	  
+	  html {
+		font-family: arial;
+	}
       
     </style>
     
@@ -41,9 +45,26 @@
 			value: 100,
 			slide: function( event, ui ) {
 				change_opacity(ui.value);
-                                console.log("hi:" + ui.value);
                         }});
 	});
+	
+	function make_slider(name) {
+		console.log("mooo");
+		$( "#audio_slider_" + name ).slider({
+			range: "min",
+			min: 0,
+			max: 1,
+                        step: 0.1,
+			value: 100,
+			slide: function( event, ui ) {
+				change_sound(name, ui.value);
+                        }});
+	}
+	
+	function change_sound(name, val){
+	  var audio_element = document.getElementById("new_audio_" + name);
+	  audio_element.volume = val;
+	}
     </script>
 
   </head>
@@ -53,41 +74,19 @@
     <a style="display:none" id="video-end" href="#menu"></a>
     <div style="display:none;"><div style="background-color:black; color:#dddddd; padding:20px;" id="menu">
     Thank you for participating in The Dissolving Localities project, we hope you have enjoyed your tour.
-    </br></br>
-    Share your trip:</br>
-
-    <!-- SMARTADDON BEGIN -->
-    <script type="text/javascript">
-    (function() {
-    var s=document.createElement('script');s.type='text/javascript';s.async = true;
-    s.src='http://s1.smartaddon.com/share_addon.js';
-    var j =document.getElementsByTagName('script')[0];j.parentNode.insertBefore(s,j);
-    })();
-    </script>
-    
-    <div id="sa_share_bar" onclick="share_by_mail();">
-    <a id="sa_share_facebook" layout="icon" size="24"></a>
-    <a id="sa_share_twitter" layout="icon" size="24"></a>
-    <a id="sa_share_googleplus" layout="icon" size="24"></a>
-    <a onclick="share_by_mail(); "id="sa_share_email" layout="icon" size="24"></a>
-        </div>
-    
-    <!-- SMARTADDON END -->
-
-    <input type="text" id="share-link" style="width:400;"/>
+    </br>
     </br>
     <button type="button" onclick="to_map_screen();">Back to tour selection</button>
     <button type="button" onclick="play_again();">Replay video</button>
     </br></br>
     <h3 style="color:red;"> Credits: </h3>
     
-    Emmanuel Witzthum - @witzthum6 </br>
-    Michael Sverdlin  - @msveder </br>
-    Shai Yerushalmi   - Shai@TRAILim.com </br>
-    <!--<img height="20%" style="position:absolute; bottom:10; right:200;" onclick="check();" src="images/go.png"/>-->
+    Emmanuel Witzthum - emmanuel.witzthum@gmail.com</br>
+    Michael Sverdlin  - m@sveder.com</br>
+    Shai Yerushalmi   - Shai@TRAILim.com</br>
     </div></div>
     
-    <canvas style="z-index:-1;margin:0;padding:0;border-width: 0; height: 80%; width: 100%;" id="canvas-final"></canvas>
+    <canvas style="z-index:-1;margin:0;padding:0;border-width: 0; height: 75%; width: 100%;" id="canvas-final"></canvas>
     
     
     <video style="display:none;" id="video-canvas-fancy" controls muted autoplay>
@@ -99,8 +98,8 @@
     </video>
     
     <canvas style= "display:none;" id="canvas-copy-fancy"></canvas>
-    <span style="font:bold 20px sans-serif">Video Effects</span>
-    <span style="float:right; font:bold 20px sans-serif">Audio Control</span> </br></br>
+    <span style="font:bold 20px sans-serif;">Video Effects</span>
+    <span style="float:right; font:bold 20px sans-serif">Audio Control</span> </br>
     <span style="float:right;" id="audio-div"></span>
     
     Opacity:
@@ -111,6 +110,7 @@
     <button type="button" onclick="toggle_invert();">Invert</button>
     <button type="button" onclick="toggle_mirror();">Mirror</button>
     <button type="button" onclick="switch_middle();">Switch Videos</button>
+    <button type="button" onclick="toggle_overlay();">Toggle Overlay</button>
     <button type="button" onclick="stop_video();">Stop Video</button>
     
     
@@ -135,6 +135,7 @@
       var should_mirror = false;
       var should_sepia = false;
       var should_switch = false;
+      var should_overlay = false;
       
       var change_red = 1;
       var change_green = 1;
@@ -274,10 +275,10 @@
       }, false);
       }
       
-      function processEffectFrame() {
-	if (stop_everything){
-	  return;
-	}
+    function processEffectFrame() {
+		if (stop_everything){
+		  return;
+		}
         frame += 1;
 
         if (frame_effect[frame] != null){
@@ -305,6 +306,10 @@
             case "should_mirror":
               toggle_mirror();
               break;
+	    
+	    case "should_overlay":
+	      toggle_overlay();
+	      break;
             
             case "color":
               var color_parts = parts[1].split(",");
@@ -319,12 +324,27 @@
           outer_video = video_second;
           inner_video = video_dom;
         }
-        
+        ctx_copy.globalAlpha = 1;
+	canvas_copy.globalAlpha = 1;
+	
+	if (should_overlay){
+	  ctx_copy.globalAlpha = 0.5;
+	  canvas_copy.globalAlpha = 0.5;
+	}
+	
         ctx_copy.drawImage(outer_video, 0, 0);
+	
         
-        first_start = outer_video.videoWidth / 3.0;
-        second_start = inner_video.videoWidth / 3.0;
-        ctx_copy.drawImage(inner_video, second_start, 0, second_start, inner_video.videoHeight, first_start, 0, first_start, outer_video.videoHeight);
+	if (should_overlay){
+	  ctx_copy.globalAlpha = 0.5;
+	  canvas_copy.globalAlpha = 0.5;
+	  ctx_copy.drawImage(inner_video, 0, 0);
+	}
+	else {
+	  first_start = outer_video.videoWidth / 3.0;
+	  second_start = inner_video.videoWidth / 3.0;
+	  ctx_copy.drawImage(inner_video, second_start, 0, second_start, inner_video.videoHeight, first_start, 0, first_start, outer_video.videoHeight);
+	}
         
         var image_data = ctx_copy.getImageData(0, 0, canvas_copy.width, canvas_copy.height);
 
@@ -333,6 +353,7 @@
         if (should_bw){
           make_black_and_white(data, canvas_copy.width, canvas_copy.height);
         }
+		
         
         if (should_invert){
           invert(data, canvas_copy.width, canvas_copy.height);
@@ -341,11 +362,17 @@
         if (should_sepia){
           sepia(data, canvas_copy.width, canvas_copy.height);
         }
+		var did_colorize = false;
         
         if ((change_red != 1) || (change_blue != 1) || (change_green != 1) && (!should_bw)){
           //effect_pipeline["colorize"] = recolor;
           recolor(data, canvas_copy.width, canvas_copy.height);
-        }
+		  did_colorize = true;
+        } 
+		
+		if ((!did_colorize) || (!should_bw) || (!should_sepia) || (!should_invert)){
+          fade_edges(data, canvas_copy.width, canvas_copy.height);
+		}
         //else {
         //  effect_pipeline["colorize"] = undefined;
         //}
@@ -502,6 +529,12 @@
             return [single, single, single, a];          
           });
       }
+	  
+	  function fade_edges(data, width, height){
+        per_pixel_effect(data, width, height, function(r, g, b, a){
+            return [r, g, b, a];          
+          });
+      }
       
       function toggle_invert(){
         should_invert = !should_invert;
@@ -549,12 +582,16 @@
           canvas_final.className = "";
         }
       }
+      
+      function toggle_overlay(){
+	should_overlay = !should_overlay;
+	desc += "frame=" + frame + ";should_overlay=" + should_overlay + ";";
+      }
             
       function show_link(link_text){
         history.pushState({}, "page 2", "dissolve.html?replay=" + link_text);
         var url = "sveder.com/freshpaint/dissolve.html?replay=" + link_text;
-        var input = document.getElementById("share-link");
-        input.value = url;
+
         
                
         $("a#video-end").fancybox({
@@ -595,13 +632,19 @@
       
       function add_audio_control(audio_name, tour_name){
         var audio_element = document.createElement('span');
-        var inner = "<audio class='moo' style='float:right; width=50px; margin-left:7px; margin-right:7px;' id='new_audio' autoplay controls='Volume'><source src=" + audio_name + " type='audio/mp3'/>Your browser does not support the audio tag.</audio>";
-        inner += "<bold style='float:right'>" + tour_name + "</bold></br>";
+
+        var inner = "<audio class='moo' style='display: none; float:right; width=50px; margin-left:7px; margin-right:7px;' id='new_audio_" + audio_name + "' autoplay><source src=" + audio_name + " type='audio/mp3'/>Your browser does not support the audio tag.</audio>";
+	inner += "<div id='audio_slider_" + audio_name + "' style='float: right; width:200px; height:10px;margin:15px;'></div>";
+        inner += "<bold style='float:right'>" + audio_name + "</bold></br>";
         audio_element.innerHTML = inner;
-        
+
+	var script_ele = document.createElement("script");
+	script_ele.innerHTML = "make_slider('" + audio_name + "')";
+	
         var audio_div = document.getElementById('audio-div');
         audio_div.appendChild(audio_element);
-        $("#new_audio").fadeIn('slow');
+	audio_div.appendChild(script_ele);
+        
       }
       
       function to_map_screen(){
@@ -627,7 +670,6 @@
 	
 	post_data();
       }
-      
     </script>
   </body>
 </html>
