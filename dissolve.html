@@ -149,6 +149,12 @@
       
       var stop_everything = false;
       
+      
+      function volumer_changer(new_val, name){
+            $("#" + name)[0].volume = new_val;
+      }
+      
+      
       function color_picked(color){
         change_colors(color.rgb[0], color.rgb[1], color.rgb[2]);
       }
@@ -631,21 +637,17 @@
       
       
       function add_audio_control(audio_name, tour_name){
-        var audio_element = document.createElement('span');
-
-        var inner = "<audio class='moo' style='display: none; float:right; width=50px; margin-left:7px; margin-right:7px;' id='new_audio_" + audio_name + "' autoplay><source src=" + audio_name + " type='audio/mp3'/>Your browser does not support the audio tag.</audio>";
-	inner += "<div id='audio_slider_" + audio_name + "' style='float: right; width:200px; height:10px;margin:15px;'></div>";
-        inner += "<bold style='float:right'>" + audio_name + "</bold></br>";
-        audio_element.innerHTML = inner;
-
-	var script_ele = document.createElement("script");
-	script_ele.innerHTML = "make_slider('" + audio_name + "')";
+	audio_id = audio_name.split("/")[1].split(".")[0];
+	var inner = "<audio class='moo' id='" + audio_id + "'  autoplay ><source src='" + audio_name + "' type='audio/mp3' />Your browser does not support the audio tag.</audio>";
+	inner += "<br>";
+	inner += tour_name + ": <input type='range' value='1' step='0.01' min='0' max='1' onchange='volumer_changer(value, \"" + audio_id + "\");'/>";
 	
-        var audio_div = document.getElementById('audio-div');
-        audio_div.appendChild(audio_element);
-	audio_div.appendChild(script_ele);
-        
+	var audio_div = document.getElementById('audio-div');
+        audio_div.innerHTML += inner;
+
       }
+      
+      
       
       function to_map_screen(){
         document.location.href = "start.html";
